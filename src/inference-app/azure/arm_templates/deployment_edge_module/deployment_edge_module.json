@@ -1,0 +1,164 @@
+{
+    "modulesContent": {
+        "$edgeAgent": {
+            "properties.desired": {
+                "modules": {
+                    "inference-engine": {
+                        "settings": {
+                            "image": "<myAcrName>.azurecr.io/inference-engine:v1",
+                            "createOptions": "{\"HostConfig\":{\"Binds\":[\"/opt/intel/inference_engine_vpu_arm:/opt/intel/inference_engine_vpu_arm\"]},\"Entrypoint\": [\"/bin/entrypoint.sh\"]}"
+                        },
+                        "type": "docker",
+                        "env": {
+                            "ZMQ_ADDRESS": {
+                                "value": "<MY_ZMQ_ADDRESS_IE>"
+                            },
+                            "ZMQ_VIDEO_ADDRESS_SUB": {
+                                "value": "<MY_ZMQ_VIDEO_ADDRESS_SUB_IE>"
+                            },
+                            "AZ_CONNECTION_STRING": {
+                                "value": "<MY_AZ_CONNECTION_STRING>"
+                            },
+                            "VIDEO_CONFIG_PATH": {
+                                "value": "<MY_VIDEO_CONFIG_PATH>"
+                            },
+                            "MAC_ADDRESS_PATH": {
+                                "value": "<MY_MAC_ADDRESS_PATH>"
+                            },
+                            "IOTHUB_SENDING_INTERVAL": {
+                                "value": "<MY_IOTHUB_SENDING_INTERVAL>"
+                            },
+                            "MAX_DISAPPEARED": {
+                                "value": "<MY_MAX_DISAPPEARED>"
+                            }
+                        },
+                        "status": "running",
+                        "restartPolicy": "always",
+                        "version": "1.0"
+                    },
+                    "ncs2-manager": {
+                        "settings": {
+                            "image": "<myAcrName>.azurecr.io/ncs2-manager:v1",
+                            "createOptions": "{\"HostConfig\":{\"Binds\":[\"/dev:/dev\",\"/tmp/.X11-unix:/tmp/.X11-unix\",\"/tmp/.docker.xauth:/tmp/.docker.xauth\", \"/opt/intel/inference_engine_vpu_arm:/opt/intel/inference_engine_vpu_arm\"],\"Privileged\": \"true\"},\"Entrypoint\": [\"/bin/entrypoint.sh\"]}"
+                        },
+                        "type": "docker",
+                        "env": {
+                            "INITIAL_H": {
+                                "value": "<MY_INITIAL_H>"
+                            },
+                            "INITIAL_W": {
+                                "value": "<MY_INITIAL_W>"
+                            },
+                            "QT_X11_NO_MITSHM": {
+                                "value": "<MY_QT_X11_NO_MITSHM>"
+                            },
+                            "SHOW_GUI": {
+                                "value": "<MY_SHOW_GUI>"
+                            },
+                            "XAUTH": {
+                                "value": "<MY_XAUTH>"
+                            },
+                            "XSOCK": {
+                                "value": "<MY_XSOCK>"
+                            },
+                            "ZMQ_ADDRESS_PUB": {
+                                "value": "<MY_ZMQ_ADDRESS_PUB>"
+                            },
+                            "ZMQ_VIDEO_ADDRESS_SUB": {
+                                "value": "<MY_ZMQ_VIDEO_ADDRESS_SUB_NCS>"
+                            },
+                            "ZMQ_VIDEO_ADDRESS_REQ": {
+                                "value": "<MY_ZMQ_VIDEO_ADDRESS_REQ_NCS>"
+                            },
+                            "INTEL_OPENVINO_DIR": {
+                                "value": "<MY_INTEL_OPENVINO_DIR>"
+                            },
+                            "PERSON_DETECTION_THRESHOLD": {
+                                "value": "<MY_PERSON_DETECTION_THRESHOLD>"
+                            },
+                            "FACE_DETECTION_THRESHOLD": {
+                                "value": "<MY_FACE_DETECTION_THRESHOLD>"
+                            },
+                            "THREAD_GET_INTERVAL_VIDEO_ADDRESS": {
+                                "value": "<MY_THREAD_GET_INTERVAL_VIDEO_ADDRESS>"
+                            }
+                        },
+                        "status": "running",
+                        "restartPolicy": "always",
+                        "version": "1.0"
+                    },
+                    "video-manager": {
+                        "settings": {
+                            "image": "<myAcrName>.azurecr.io/video-manager:v1",
+                            "createOptions": "{\"HostConfig\":{\"Binds\":[\"/dev:/dev\",\"/home/pi/Desktop/videos/output:/awl/video_out\",\"/home/pi/Desktop/videos/input:/awl/videos\"],\"Privileged\": \"true\"},\"Entrypoint\": [\"/bin/entrypoint.sh\"]}"
+                        },
+                        "type": "docker",
+                        "env": {
+                            "BUFFER_LESS": {
+                                "value": "<MY_BUFFER_LESS>"
+                            },
+                            "VIDEO_SRC": {
+                                "value": "<MY_VIDEO_SRC>"
+                            },
+                            "ZMQ_VIDEO_ADDRESS_REP": {
+                                "value": "<MY_ZMQ_VIDEO_ADDRESS_REP>"
+                            },
+                            "FRAME_INTERVAL": {
+                                "value": "<MY_FRAME_INTERVAL>"
+                            },
+                            "THREAD_REPLY_VIDEO_FRAME": {
+                                "value": "<MY_THREAD_REPLY_VIDEO_FRAME>"
+                            }
+                        },
+                        "status": "running",
+                        "restartPolicy": "always",
+                        "version": "1.0"
+                    }
+                },
+                "runtime": {
+                    "settings": {
+                        "minDockerVersion": "v1.25",
+                        "registryCredentials": {
+                            "<myAcrName>": {
+                                "address": "<myAcrName>.azurecr.io",
+                                "password": "<myAcrPw>",
+                                "username": "<myAcrName>"
+                            }
+                        }
+                    },
+                    "type": "docker"
+                },
+                "schemaVersion": "1.0",
+                "systemModules": {
+                    "edgeAgent": {
+                        "settings": {
+                            "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
+                            "createOptions": "{}"
+                        },
+                        "type": "docker"
+                    },
+                    "edgeHub": {
+                        "settings": {
+                            "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
+                            "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"443/tcp\":[{\"HostPort\":\"443\"}],\"5671/tcp\":[{\"HostPort\":\"5671\"}],\"8883/tcp\":[{\"HostPort\":\"8883\"}]}}}"
+                        },
+                        "type": "docker",
+                        "status": "running",
+                        "restartPolicy": "always"
+                    }
+                }
+            }
+        },
+        "$edgeHub": {
+            "properties.desired": {
+                "routes": {
+                    "route": "FROM /messages/* INTO $upstream"
+                },
+                "schemaVersion": "1.0",
+                "storeAndForwardConfiguration": {
+                    "timeToLiveSecs": 7200
+                }
+            }
+        }
+    }
+}

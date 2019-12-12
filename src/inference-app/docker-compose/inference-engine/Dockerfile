@@ -1,0 +1,25 @@
+FROM raspbian:openvino
+LABEL maintainer="AWL"
+LABEL email="awl@co.jp"
+
+USER root
+
+# Support libs for
+RUN apt install -y python3.5-dev libboost-python-dev
+
+COPY requirements.txt ./
+
+COPY lib_install_default.sh .
+COPY lib_install_wget.sh .
+
+RUN if ! sh ./lib_install_default.sh ; then sh ./lib_install_wget.sh ; fi
+
+USER ${USER}
+WORKDIR ${AWL_DIR}
+
+COPY . .
+RUN chmod +x entrypoint.sh
+RUN sudo ln -f entrypoint.sh /bin/entrypoint.sh
+
+# CMD ["python3", "publisher.py"]
+CMD tail -f /dev/null

@@ -1,0 +1,4 @@
+numpy==1.16.1
+pyzmq==17.0.0
+scipy==1.2.1
+opencv-contrib-python==3.4.4.19

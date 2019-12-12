@@ -1,0 +1,54 @@
+version: '3.0'
+
+services:
+  inference-engine:
+    build: "./inference-engine"
+    image: "inference-engine:v1"
+    restart: always
+    env_file:
+      - inference-engine/.env
+    depends_on:
+      - ncs2-manager
+    command: >
+      /bin/entrypoint.sh
+    volumes:
+      - $PWD/inference-engine:${AWL_DIR}
+
+  ncs2-manager:
+    build:  "./ncs2-manager"
+    image: ncs2-manager:v1
+    restart: always
+    env_file:
+      - ncs2-manager/.env
+    depends_on:
+      - video-manager
+    command: >
+      /bin/entrypoint.sh
+    privileged: true
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - INTEL_OPENVINO_DIR=${INTEL_OPENVINO_DIR}
+    volumes:
+      - /dev:/dev
+      - ${XSOCK}:${XSOCK}
+      - ${XAUTH}:${XAUTH}
+      - ${INTEL_OPENVINO_DIR}:${INTEL_OPENVINO_DIR}
+      - $PWD/ncs2-manager:${AWL_DIR}
+
+  video-manager:
+    build: "./video-manager"
+    image: video-manager:v1
+    restart: always
+    env_file:
+      - 'video-manager/.env'
+    command: >
+      /bin/entrypoint.sh
+    privileged: true
+    volumes:
+      - /dev:/dev
+      - $PWD/video-manager:${AWL_DIR}
+      - $PWD/video-manager/video_out:${AWL_DIR}/video_out
+
+volumes:
+  registry:
